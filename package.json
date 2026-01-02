@@ -1,0 +1,15 @@
+{
+  "name": "laftel-plus",
+  "description": "라프텔 확장 기능 - 평가/보고싶다/관심없음 관리",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.js",
+    "clean": "node scripts/build.js --clean"
+  },
+  "devDependencies": {
+    "archiver": "^7.0.1"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

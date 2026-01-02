@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "라프텔 Plus",
+  "version": "1.0.0",
+  "description": "라프텔 확장 기능",
+  "permissions": [
+    "storage",
+    "cookies"
+  ],
+  "host_permissions": [
+    "https://laftel.net/*",
+    "https://*.laftel.net/*"
+  ],
+  "action": {
+    "default_popup": "src/popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "background": {
+    "service_worker": "src/background/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://laftel.net/*", "https://*.laftel.net/*"],
+      "js": ["src/content/content.js"],
+      "css": ["src/content/content.css"]
+    }
+  ]
+}

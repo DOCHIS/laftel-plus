@@ -1,0 +1,235 @@
+/* Laftel Plus - Content Styles */
+
+/* 평가 오버레이 */
+.laftel-plus-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 46px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.laftel-plus-rated-overlay {
+  background: rgba(0, 0, 0, 0.6);
+  transition: background 0.2s ease;
+}
+
+.laftel-plus-rated:hover .laftel-plus-rated-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.laftel-plus-label {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 4px;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+.laftel-plus-badge {
+  color: #ffd700;
+  font-size: 16px;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+/* 보고싶다 버튼 */
+.laftel-plus-wish-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 16px;
+  z-index: 15;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.laftel-plus-wish-btn:hover {
+  background: rgba(255, 71, 119, 0.8);
+  transform: scale(1.1);
+}
+
+/* 보고싶다 오버레이 */
+.laftel-plus-wish-overlay {
+  background: rgba(255, 107, 157, 0.5);
+  transition: background 0.2s ease;
+}
+
+.laftel-plus-wish:hover .laftel-plus-wish-overlay {
+  background: rgba(255, 107, 157, 0.3);
+}
+
+/* 보고싶다 활성화 상태 */
+.laftel-plus-wish-btn.active {
+  background: linear-gradient(135deg, #ff6b9d, #ff4777);
+  box-shadow: 0 2px 8px rgba(255, 71, 119, 0.5);
+}
+
+.laftel-plus-wish-btn.active:hover {
+  background: linear-gradient(135deg, #ff4777, #ff2255);
+}
+
+/* 로딩 상태 */
+.laftel-plus-wish-btn.loading,
+.laftel-plus-hate-btn.loading {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.laftel-plus-wish-btn:disabled,
+.laftel-plus-hate-btn:disabled {
+  cursor: not-allowed;
+}
+
+/* 관심 없음 버튼 */
+.laftel-plus-hate-btn {
+  position: absolute;
+  top: 8px;
+  right: 48px;
+  width: 32px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-size: 16px;
+  z-index: 15;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.laftel-plus-hate-btn:hover {
+  background: rgba(107, 114, 128, 0.8);
+  transform: scale(1.1);
+}
+
+/* 관심 없음 오버레이 (평가한 작품과 동일 스타일) */
+.laftel-plus-hate-overlay {
+  background: rgba(0, 0, 0, 0.6);
+  transition: background 0.2s ease;
+}
+
+.laftel-plus-hate:hover .laftel-plus-hate-overlay {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* 관심 없음 활성화 상태 */
+.laftel-plus-hate-btn.active {
+  background: linear-gradient(135deg, #6b7280, #4b5563);
+  box-shadow: 0 2px 8px rgba(107, 114, 128, 0.5);
+}
+
+.laftel-plus-hate-btn.active:hover {
+  background: linear-gradient(135deg, #4b5563, #374151);
+}
+
+/* 설정에 따른 카드 숨기기 */
+.laftel-plus-hide-hate .laftel-plus-hate,
+.laftel-plus-hide-rated .laftel-plus-rated {
+  visibility: hidden;
+}
+
+/* 플로팅 버튼 */
+.laftel-plus-floating-btn {
+  position: fixed;
+  left: 24px;
+  bottom: 24px;
+  height: 40px;
+  padding: 0 16px;
+  background: linear-gradient(135deg, #816BFF 0%, #6B5BFF 100%);
+  border: none;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+  z-index: 9999;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(129, 107, 255, 0.4);
+}
+
+.laftel-plus-floating-icon {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.laftel-plus-floating-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1px;
+}
+
+.laftel-plus-floating-title {
+  font-size: 10px;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+.laftel-plus-floating-label {
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.laftel-plus-floating-btn:hover {
+  background: linear-gradient(135deg, #9B8BFF 0%, #816BFF 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(129, 107, 255, 0.5);
+}
+
+.laftel-plus-floating-btn:active {
+  transform: translateY(0);
+}
+
+.laftel-plus-floating-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.laftel-plus-floating-btn.loading .laftel-plus-floating-icon {
+  animation: laftel-plus-spin 1s linear infinite;
+}
+
+.laftel-plus-floating-btn.success {
+  background: linear-gradient(135deg, #4ade80 0%, #22c55e 100%);
+  box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);
+}
+
+.laftel-plus-floating-btn.error {
+  background: linear-gradient(135deg, #f87171 0%, #ef4444 100%);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+}
+
+@keyframes laftel-plus-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}

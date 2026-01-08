@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>애니메이션 찾기 - 라프텔 Plus</title>
+  <link rel="stylesheet" href="search.css">
+</head>
+<body>
+  <div class="app">
+    <div class="main-content">
+      <!-- Left Sidebar: Filters -->
+      <aside class="sidebar" id="sidebar">
+        <!-- Logo -->
+        <div class="sidebar-logo">
+          <h1 class="logo">라프텔 플러스</h1>
+          <button id="sidebar-toggle" class="sidebar-toggle" title="사이드바 접기">◀</button>
+        </div>
+
+        <!-- Extension Filters -->
+        <div class="filter-section extension-filters">
+          <h3 class="filter-title">내 목록 필터</h3>
+          <label class="filter-checkbox">
+            <input type="checkbox" id="exclude-rated">
+            <span>평가한 작품 제외</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" id="exclude-hate" checked>
+            <span>관심 없는 작품 제외</span>
+          </label>
+        </div>
+
+        <!-- Viewable Filters -->
+        <div class="filter-section">
+          <h3 class="filter-title">시청 옵션</h3>
+          <label class="filter-checkbox">
+            <input type="checkbox" id="filter-viewable" checked>
+            <span>감상 가능한 작품만</span>
+          </label>
+          <label class="filter-checkbox">
+            <input type="checkbox" id="filter-svod">
+            <span>멤버십 작품만</span>
+          </label>
+        </div>
+
+        <!-- Genre Filter -->
+        <div class="filter-section collapsible">
+          <h3 class="filter-title" data-toggle="genre">
+            장르 <span class="toggle-icon">▼</span>
+          </h3>
+          <div class="filter-options" id="genre-options"></div>
+        </div>
+
+        <!-- Tag Filter -->
+        <div class="filter-section collapsible">
+          <h3 class="filter-title" data-toggle="tags">
+            태그 <span class="toggle-icon">▼</span>
+          </h3>
+          <div class="filter-options" id="tags-options"></div>
+        </div>
+
+        <!-- Year Filter -->
+        <div class="filter-section collapsible">
+          <h3 class="filter-title" data-toggle="years">
+            연도 <span class="toggle-icon">▼</span>
+          </h3>
+          <div class="filter-options" id="years-options"></div>
+        </div>
+
+        <!-- Ending Filter -->
+        <div class="filter-section collapsible">
+          <h3 class="filter-title" data-toggle="ending">
+            완결 여부 <span class="toggle-icon">▼</span>
+          </h3>
+          <div class="filter-options" id="ending-options"></div>
+        </div>
+
+        <!-- Clear Filters Button -->
+        <div class="filter-section">
+          <button id="clear-filters-btn" class="clear-filters-btn">필터 초기화</button>
+        </div>
+
+        <!-- Sidebar Actions -->
+        <div class="filter-section sidebar-actions">
+          <button id="sync-btn" class="sidebar-btn" title="라프텔에서 평가/보고싶다 데이터 가져오기">
+            <span>↻</span> 데이터 동기화
+          </button>
+          <p class="sidebar-desc">라프텔에서 평가/보고싶다 정보를 가져옵니다</p>
+          <button id="my-data-btn" class="sidebar-btn">
+            <span>📋</span> 내 데이터 관리
+          </button>
+        </div>
+      </aside>
+
+      <!-- Right: Card Grid -->
+      <main class="content">
+        <div class="results-header">
+          <div class="results-left">
+            <button id="sidebar-expand" class="sidebar-expand" title="사이드바 펼치기" style="display: none;">▶</button>
+            <span id="results-count">0개의 작품</span>
+            <div class="active-filters" id="active-filters"></div>
+          </div>
+          <select id="sort-select" class="sort-select">
+            <option value="rank">랭킹순</option>
+            <option value="recent">최신순</option>
+            <option value="name">이름순</option>
+          </select>
+        </div>
+
+        <div class="card-grid" id="card-grid">
+          <!-- Cards rendered here -->
+        </div>
+
+        <div class="load-more">
+          <div id="loading-spinner" class="loading-spinner" style="display: none;">
+            <div class="spinner"></div>
+            <span>로딩 중...</span>
+          </div>
+          <div id="sentinel"></div>
+        </div>
+      </main>
+
+      <!-- Detail Overlay -->
+      <div class="detail-overlay" id="detail-overlay" style="display: none;"></div>
+
+      <!-- Right Sidebar: Detail -->
+      <aside class="detail-sidebar" id="detail-sidebar" style="display: none;">
+        <button id="detail-close" class="detail-close-side">◀</button>
+        <iframe id="detail-iframe" class="detail-iframe"></iframe>
+      </aside>
+    </div>
+  </div>
+
+  <!-- Filter Modal (더보기) -->
+  <div class="modal-overlay" id="filter-modal" style="display: none;">
+    <div class="modal">
+      <div class="modal-header">
+        <h2 id="filter-modal-title">필터</h2>
+        <button class="modal-close" id="filter-modal-close">&times;</button>
+      </div>
+      <div class="modal-note">클릭: 포함 (초록) → 제외 (빨강) → 해제</div>
+      <div class="filter-modal-list" id="filter-modal-list"></div>
+    </div>
+  </div>
+
+  <!-- My Data Modal (관심없음 목록 + 백업/복원 + 보고싶다 초기화 통합) -->
+  <div class="modal-overlay" id="my-data-modal" style="display: none;">
+    <div class="modal modal-large">
+      <div class="modal-header">
+        <h2>내 데이터 관리</h2>
+        <button class="modal-close" id="my-data-modal-close">&times;</button>
+      </div>
+      <div class="modal-tabs">
+        <button class="modal-tab active" data-tab="hate-list">관심없음 목록</button>
+        <button class="modal-tab" data-tab="backup">백업/복원</button>
+        <button class="modal-tab" data-tab="wish-clear">보고싶다 초기화</button>
+      </div>
+      <div class="modal-body">
+        <!-- 관심없음 목록 탭 -->
+        <div class="tab-content active" id="tab-hate-list">
+          <div class="modal-note">확장 프로그램에만 저장됨</div>
+          <div class="modal-search">
+            <input type="text" id="hate-search" placeholder="검색...">
+          </div>
+          <div class="hate-list" id="hate-list"></div>
+        </div>
+
+        <!-- 백업/복원 탭 -->
+        <div class="tab-content" id="tab-backup">
+          <div class="backup-section">
+            <h3>내보내기</h3>
+            <p class="backup-desc">관심없음 목록을 백업 파일로 내보냅니다.</p>
+            <button id="export-btn" class="btn-secondary">파일로 내보내기</button>
+          </div>
+          <div class="backup-section">
+            <h3>불러오기</h3>
+            <p class="backup-desc">백업 문자열을 붙여넣어 복원합니다.</p>
+            <textarea id="import-input" class="import-textarea" placeholder="백업 문자열 붙여넣기..."></textarea>
+            <div class="import-actions">
+              <button id="import-merge-btn" class="btn-secondary">병합</button>
+              <button id="import-replace-btn" class="btn-danger">교체</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 보고싶다 초기화 탭 -->
+        <div class="tab-content" id="tab-wish-clear">
+          <div class="wish-clear-section">
+            <p class="backup-desc">라프텔에 등록된 모든 보고싶다를 해제합니다. 이 작업은 되돌릴 수 없습니다.</p>
+            <button id="clear-wish-btn" class="btn-danger btn-large">보고싶다 전체 해제</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sync Progress Modal -->
+  <div class="modal-overlay" id="sync-modal" style="display: none;">
+    <div class="modal modal-small">
+      <div class="modal-header">
+        <h2>데이터 수집 중</h2>
+      </div>
+      <div class="modal-body">
+        <div class="progress-track">
+          <div class="progress-bar" id="sync-progress-bar"></div>
+        </div>
+        <div class="progress-text" id="sync-progress-text">준비 중...</div>
+      </div>
+    </div>
+  </div>
+
+  <script src="search.js"></script>
+</body>
+</html>

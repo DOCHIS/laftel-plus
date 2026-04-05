@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="라프텔 Plus Chrome 확장 프로그램 개인정보처리방침">
+  <link rel="alternate" hreflang="en" href="https://laftel-plus.myuntras.net/privacy-policy.html">
+  <link rel="alternate" hreflang="ko" href="https://laftel-plus.myuntras.net/privacy-policy-ko.html">
+  <title>개인정보처리방침 - 라프텔 Plus</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #ddd; min-height: 100vh; padding: 40px 24px; }
+    .container { max-width: 680px; margin: 0 auto; }
+    h1 { font-size: 28px; font-weight: 700; color: #816BFF; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: #888; margin-bottom: 4px; }
+    hr { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 24px 0; }
+    h2 { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 12px; }
+    p { font-size: 14px; line-height: 1.8; color: #bbb; margin-bottom: 16px; }
+    ul { margin-bottom: 16px; padding-left: 20px; }
+    li { font-size: 14px; line-height: 1.8; color: #bbb; margin-bottom: 4px; }
+    strong { color: #ddd; }
+    code { color: #816BFF; font-size: 13px; }
+    .back { display: inline-block; margin-top: 16px; color: #816BFF; text-decoration: none; font-size: 13px; }
+    .back:hover { text-decoration: underline; }
+    .footer { margin-top: 32px; font-size: 12px; color: #666; text-align: center; }
+    .lang-switch { position: fixed; top: 16px; right: 16px; }
+    .lang-switch a { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #888; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; transition: all 0.2s; }
+    .lang-switch a:hover { color: #fff; background: rgba(255,255,255,0.15); }
+  </style>
+  <script>localStorage.setItem('lang_manual', '1');</script>
+</head>
+<body>
+  <div class="lang-switch"><a href="privacy-policy.html">English</a></div>
+
+  <div class="container">
+    <h1>개인정보처리방침</h1>
+    <p class="subtitle"><strong>라프텔 플러스</strong></p>
+    <p class="subtitle">최종 수정일: 2026년 4월</p>
+    <hr>
+
+    <h2>1. 개요</h2>
+    <p>라프텔 플러스는 라프텔(laftel.net) 서비스 이용 편의를 위한 도구입니다. 기본적으로 모든 데이터는 사용자의 브라우저에만 저장됩니다. 선택적으로 Google Drive를 통한 클라우드 동기화를 사용할 수 있습니다.</p>
+
+    <h2>2. 수집하는 정보</h2>
+    <p>본 확장 프로그램은 개인정보를 수집하지 않습니다.</p>
+
+    <h2>3. 로컬 저장 데이터</h2>
+    <p>다음 데이터는 사용자의 브라우저 로컬 스토리지(chrome.storage.local)에만 저장되며, 외부 서버로 전송되지 않습니다:</p>
+    <ul>
+      <li>라프텔에서 가져온 평가한 작품 목록 (작품 ID, 별점)</li>
+      <li>라프텔에서 가져온 보고싶다 목록 (작품 ID)</li>
+      <li>사용자가 지정한 관심없음 목록 (작품 ID)</li>
+      <li>작품 정보 캐시 (이름, 썸네일 URL, 장르, 매체, 연령등급)</li>
+      <li>확장 프로그램 설정값 (숨기기 옵션, 필터 설정)</li>
+    </ul>
+
+    <h2>4. 쿠키 사용</h2>
+    <p>라프텔 API 호출 시 사용자의 로그인 상태를 확인하기 위해 라프텔 도메인(laftel.net)의 인증 쿠키를 읽습니다. 이 정보는:</p>
+    <ul>
+      <li>라프텔 API 요청의 인증 헤더에만 사용됩니다</li>
+      <li>확장 프로그램에 저장되지 않습니다</li>
+      <li>외부로 전송되지 않습니다</li>
+    </ul>
+
+    <h2>5. 클라우드 동기화 (선택 사항)</h2>
+    <p>사용자가 클라우드 동기화 기능을 활성화하면, 관심없음 목록이 사용자 본인의 Google Drive에 저장됩니다.</p>
+    <ul>
+      <li><strong>저장 위치</strong>: 사용자 본인의 Google Drive 앱 데이터 폴더 (사용자에게 보이지 않는 숨김 폴더)</li>
+      <li><strong>저장 데이터</strong>: 관심없음 목록 (작품 ID, 이름, 썸네일 URL)</li>
+      <li><strong>접근 범위</strong>: <code>drive.appdata</code> 스코프만 사용하여, 사용자의 다른 Drive 파일에는 접근하지 않습니다</li>
+      <li><strong>인증</strong>: Chrome 내장 인증 API(<code>chrome.identity</code>)를 통한 Google 계정 인증</li>
+      <li>개발자 서버에 데이터가 저장되지 않습니다</li>
+      <li>동기화를 사용하지 않으면 모든 데이터는 브라우저 로컬에만 저장됩니다</li>
+    </ul>
+
+    <h2>6. 데이터 전송</h2>
+    <p>본 확장 프로그램은 다음 서비스로만 데이터를 전송합니다:</p>
+    <ul>
+      <li><strong>라프텔(laftel.net)</strong>: 평가/보고싶다 목록 조회 및 상태 변경</li>
+      <li><strong>Google Drive</strong> (선택 사항): 관심없음 목록 동기화 (사용자 본인의 Drive에만 저장)</li>
+    </ul>
+
+    <h2>7. 제3자 공유</h2>
+    <p>어떠한 데이터도 제3자와 공유, 판매, 전송하지 않습니다.</p>
+
+    <h2>8. 데이터 삭제</h2>
+    <p>브라우저에서 확장 프로그램을 제거하면 모든 로컬 저장 데이터가 자동으로 삭제됩니다. 또는 브라우저 설정에서 수동으로 삭제할 수 있습니다.</p>
+
+    <h2>9. 변경사항</h2>
+    <p>본 개인정보처리방침은 변경될 수 있으며, 변경 시 확장 프로그램 업데이트를 통해 공지됩니다.</p>
+
+    <h2>10. 문의</h2>
+    <p>문의사항이 있으시면 <a href="https://github.com/DOCHIS/laftel-plus/issues" style="color:#816BFF;">GitHub Issues</a>를 통해 연락해 주세요.</p>
+
+    <hr>
+    <a class="back" href="ko.html">← 홈으로</a>
+    <p class="footer">본 확장 프로그램은 라프텔 공식 서비스가 아닙니다.</p>
+  </div>
+</body>
+</html>

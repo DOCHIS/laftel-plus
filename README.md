@@ -12,7 +12,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Chrome-Extension-4285F4?style=flat-square&logo=googlechrome&logoColor=white" alt="Chrome Extension">
   <img src="https://img.shields.io/badge/Manifest-V3-00C853?style=flat-square" alt="Manifest V3">
-  <img src="https://img.shields.io/badge/Version-1.1.0-816BFF?style=flat-square" alt="Version">
+  <img src="https://img.shields.io/badge/Version-1.2.0-816BFF?style=flat-square" alt="Version">
   <img src="https://img.shields.io/badge/License-MIT-blue?style=flat-square" alt="License">
 </p>
 
@@ -20,7 +20,8 @@
   <a href="#-주요-기능">주요 기능</a> •
   <a href="#-설치-방법">설치</a> •
   <a href="#-사용-방법">사용법</a> •
-  <a href="#-개발">개발</a>
+  <a href="#-개발">개발</a> •
+  <a href="docs/privacy-policy.md">개인정보처리방침</a>
 </p>
 
 ---
@@ -55,7 +56,15 @@
 
 - 목록 검색 및 개별 해제
 - 장르/연령등급 표시
-- 백업/복원 기능 (base64)
+
+### ☁ 클라우드 동기화
+
+Google 계정으로 로그인하여 관심없음 목록을 여러 PC에서 동기화할 수 있습니다.
+
+- Google Drive에 자동 저장 (30초 간격)
+- 수동 동기화 및 클라우드에서 불러오기
+- 데이터는 본인의 Google Drive에만 저장 (개발자 서버 없음)
+- CRDT 기반 병합으로 충돌 없는 동기화
 
 ### 🔄 데이터 동기화
 
@@ -67,7 +76,7 @@
 
 ### Chrome 웹 스토어
 
-> 🚧 출시 예정
+[Chrome 웹 스토어에서 설치](https://chromewebstore.google.com/detail/jmhoodplammdpcobiaccbeiikolihkjp)
 
 ### 수동 설치
 
@@ -84,8 +93,9 @@
 ```text
 1️⃣  확장 프로그램 설치 후 라프텔에 로그인
 2️⃣  툴바의 확장 프로그램 아이콘 클릭 → 검색 페이지 열림
-3️⃣  "데이터 수집" 버튼을 클릭하여 평가/보고싶다 목록 수집
+3️⃣  ⚙ 설정 → "데이터 동기화"로 평가/보고싶다 목록 수집
 4️⃣  필터를 설정하고 새로운 애니메이션을 찾아보세요
+5️⃣  (선택) ⚙ 설정 → "클라우드 동기화"로 Google 로그인하여 멀티 디바이스 동기화
 ```
 
 ---
@@ -124,9 +134,11 @@ npm run clean
 |-----|------|
 | `storage` | 평가/보고싶다/관심없음 데이터 및 설정 저장 |
 | `cookies` | 라프텔 로그인 상태 확인 및 API 인증 |
+| `identity` | Google 계정 인증 (클라우드 동기화용, 선택 사항) |
+| `alarms` | 백그라운드 자동 동기화 스케줄링 |
 | `host_permissions` | laftel.net API 호출 |
 
-> 💡 모든 데이터는 브라우저 로컬 스토리지에만 저장되며, 외부 서버로 전송되지 않습니다.
+> 💡 모든 데이터는 브라우저 로컬에 저장됩니다. 클라우드 동기화 사용 시 관심없음 목록만 본인의 Google Drive에 저장되며, 개발자 서버로 전송되지 않습니다.
 
 ---
 

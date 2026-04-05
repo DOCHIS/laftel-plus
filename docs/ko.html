@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="라프텔 Plus - 라프텔(laftel.net) 애니메이션 스트리밍 서비스에서 새로운 애니메이션을 더 편리하게 찾을 수 있도록 도와주는 Chrome 확장 프로그램입니다.">
+  <link rel="alternate" hreflang="en" href="https://laftel-plus.myuntras.net/">
+  <link rel="alternate" hreflang="ko" href="https://laftel-plus.myuntras.net/ko.html">
+  <title>라프텔 Plus - 애니메이션 검색 Chrome 확장 프로그램</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #fff; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+    .container { max-width: 640px; padding: 40px 24px; }
+    h1 { font-size: 36px; font-weight: 700; color: #816BFF; margin-bottom: 16px; text-align: center; }
+    .tagline { font-size: 16px; color: #ccc; line-height: 1.6; margin-bottom: 24px; text-align: center; }
+    h2 { font-size: 16px; color: #fff; margin: 24px 0 12px; }
+    p { font-size: 14px; color: #aaa; line-height: 1.8; margin-bottom: 16px; }
+    ul { margin-bottom: 24px; padding-left: 20px; }
+    li { font-size: 14px; color: #aaa; line-height: 1.8; margin-bottom: 6px; }
+    .links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 32px 0; }
+    .links a { color: #816BFF; text-decoration: none; font-size: 14px; padding: 10px 20px; border: 1px solid rgba(129,107,255,0.3); border-radius: 8px; transition: all 0.2s; }
+    .links a:hover { background: rgba(129,107,255,0.15); }
+    footer { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; text-align: center; }
+    footer a { color: #816BFF; text-decoration: underline; font-size: 14px; }
+    .footnote { font-size: 12px; color: #666; margin-top: 12px; }
+    .lang-switch { position: fixed; top: 16px; right: 16px; }
+    .lang-switch a { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #888; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; transition: all 0.2s; }
+    .lang-switch a:hover { color: #fff; background: rgba(255,255,255,0.15); }
+  </style>
+  <script>localStorage.setItem('lang_manual', '1');</script>
+</head>
+<body>
+  <div class="lang-switch"><a href="./">English</a></div>
+
+  <div class="container">
+    <h1>라프텔 Plus</h1>
+    <p class="tagline">라프텔에서 새로운 애니메이션을 더 편리하게 찾아보세요.</p>
+
+    <h2>앱 소개</h2>
+    <p>
+      라프텔 Plus는 라프텔(laftel.net) 애니메이션 스트리밍 서비스를 위한 Chrome 브라우저 확장 프로그램입니다.
+      장르, 태그, 방영 연도, 방영 상태 등 다양한 필터를 제공하는 전용 검색 페이지를 통해 새로운 애니메이션을 찾을 수 있습니다.
+      이미 평가한 작품이나 관심없음으로 표시한 작품을 자동으로 제외하여 취향에 맞는 작품만 효율적으로 탐색할 수 있습니다.
+      검색 페이지에서 각 작품 카드의 보고싶다/관심없음 버튼으로 상태를 바로 변경할 수 있습니다.
+    </p>
+
+    <h2>Google 사용자 데이터 사용</h2>
+    <p>
+      라프텔 Plus는 선택적으로 Google Drive를 통한 클라우드 동기화 기능을 제공합니다.
+      Google 계정으로 로그인하면 관심없음 목록이 여러 기기에서 자동으로 동기화됩니다.
+      이 기능은 <code>drive.appdata</code> 스코프만 사용하며, Google Drive 내 숨김 앱 전용 폴더에만 접근합니다 — 사용자의 다른 Drive 파일이나 문서에는 접근하지 않습니다.
+      동기화되는 데이터는 작품 ID, 이름, 썸네일 URL뿐입니다.
+      개발자 서버로 데이터가 전송되지 않으며, 모든 데이터는 사용자 본인의 Google Drive 계정에만 저장됩니다.
+      클라우드 동기화는 완전히 선택 사항이며, 사용하지 않으면 모든 데이터는 브라우저 로컬에만 저장됩니다.
+    </p>
+
+    <h2>주요 기능</h2>
+    <ul>
+      <li>장르, 태그, 연도, 방영상태 등 다양한 필터를 제공하는 전용 검색 페이지</li>
+      <li>평가한 작품 및 관심없음 작품을 검색 결과에서 자동 제외</li>
+      <li>각 카드에서 보고싶다, 관심없음 상태를 바로 변경</li>
+      <li>무한 스크롤로 편리한 탐색</li>
+      <li>작품 상세 정보 사이드바</li>
+      <li>Google Drive 클라우드 동기화로 멀티 디바이스 지원 (선택)</li>
+    </ul>
+
+    <div class="links">
+      <a href="https://chromewebstore.google.com/detail/jmhoodplammdpcobiaccbeiikolihkjp">Chrome 웹 스토어</a>
+      <a href="https://github.com/DOCHIS/laftel-plus">GitHub</a>
+    </div>
+
+    <footer>
+      <a href="https://laftel-plus.myuntras.net/privacy-policy.html">개인정보처리방침</a>
+      <p class="footnote">이 확장 프로그램은 라프텔 공식 서비스가 아닙니다.</p>
+    </footer>
+  </div>
+</body>
+</html>

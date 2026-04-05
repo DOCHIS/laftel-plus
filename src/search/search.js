@@ -52,7 +52,6 @@ async function getToken() {
 
 async function apiCall(endpoint, options = {}) {
   const token = await getToken();
-  console.log('[API] Token:', token ? `${token.substring(0, 10)}...` : 'null');
 
   const headers = {
     'Content-Type': 'application/json',
@@ -534,6 +533,14 @@ async function toggleHate(itemId, item) {
   }
   await saveData('hate_items', hateData.data);
 
+  // V2 업데이트 + 클라우드 동기화 트리거
+  if (newState) {
+    await updateHateItemV2('add', itemId, item.name, item.img);
+  } else {
+    await updateHateItemV2('remove', itemId);
+  }
+  triggerCloudSync();
+
   updateCardUI(itemId);
   if (state.filters.excludeHate) {
     renderCards(false);
@@ -644,7 +651,7 @@ async function renderHateList(filter = '') {
     const ratingClass = item.rating >= 19 ? 'r19' : item.rating >= 15 ? 'r15' : item.rating >= 12 ? 'r12' : 'rall';
     return `
     <div class="hate-item" data-id="${item.id}">
-      <img class="hate-item-img" src="${item.img || ''}" alt="" onerror="this.style.display='none'">
+      <img class="hate-item-img" src="${item.img || ''}" alt="">
       <div class="hate-item-info" data-id="${item.id}">
         <div class="hate-item-title">${item.name || `ID: ${item.id}`}</div>
         ${meta ? `<div class="hate-item-meta">${meta}${item.rating ? ` <span class="hate-item-rating ${ratingClass}">${item.rating}</span>` : ''}</div>` : ''}
@@ -652,6 +659,10 @@ async function renderHateList(filter = '') {
       <button class="hate-item-remove" data-id="${item.id}">해제</button>
     </div>`;
   }).join('');
+
+  hateListEl.querySelectorAll('.hate-item-img').forEach(img => {
+    img.addEventListener('error', () => { img.style.display = 'none'; });
+  });
 
   hateListEl.querySelectorAll('.hate-item-info').forEach(info => {
     info.addEventListener('click', () => {
@@ -680,6 +691,7 @@ async function renderHateList(filter = '') {
         if (hateListCache.length === 0) {
           hateListEl.innerHTML = '<div class="hate-list-empty">관심없음 목록이 비어있습니다</div>';
         }
+        updateHateCountBadge();
         renderCards(false);
       } catch (error) {
         e.target.disabled = false;
@@ -689,9 +701,16 @@ async function renderHateList(filter = '') {
   });
 }
 
+async function updateHateCountBadge() {
+  const hate = await loadData('hate_items');
+  const badge = document.getElementById('hate-count-badge');
+  if (badge) badge.textContent = hate.data.length > 0 ? `(${hate.data.length})` : '';
+}
+
 function openMyDataModal(tab = 'hate-list') {
   const modal = document.getElementById('my-data-modal');
   modal.style.display = 'flex';
+  updateHateCountBadge();
   switchMyDataTab(tab);
   if (tab === 'hate-list') {
     document.getElementById('hate-search').value = '';
@@ -702,8 +721,8 @@ function openMyDataModal(tab = 'hate-list') {
 
 function closeMyDataModal() {
   document.getElementById('my-data-modal').style.display = 'none';
-  document.getElementById('import-input').value = '';
   hateListCache = [];
+  if (syncTimeTimer) { clearInterval(syncTimeTimer); syncTimeTimer = null; }
 }
 
 function switchMyDataTab(tabName) {
@@ -719,58 +738,11 @@ function switchMyDataTab(tabName) {
   if (tabName === 'hate-list' && hateListCache.length === 0) {
     renderHateList();
   }
-}
-
-async function exportHateData() {
-  const hate = await loadData('hate_items');
-  const json = JSON.stringify(hate.data);
-  const base64 = btoa(unescape(encodeURIComponent(json)));
-
-  // 파일로 다운로드
-  const blob = new Blob([base64], { type: 'text/plain' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `laftel-plus-backup-${new Date().toISOString().split('T')[0]}.txt`;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
-async function importHateData(merge = false) {
-  const input = document.getElementById('import-input').value.trim();
-  if (!input) {
-    alert('백업 문자열을 입력해주세요.');
-    return;
-  }
-
-  try {
-    const json = decodeURIComponent(escape(atob(input)));
-    const imported = JSON.parse(json);
-
-    if (!Array.isArray(imported)) {
-      throw new Error('Invalid format');
-    }
-
-    const currentHate = await loadData('hate_items');
-    let newData;
-
-    if (merge) {
-      const existingIds = new Set(currentHate.data.map(i => i.id));
-      const toAdd = imported.filter(i => !existingIds.has(i.id));
-      newData = [...currentHate.data, ...toAdd];
-    } else {
-      newData = imported;
-    }
-
-    await saveData('hate_items', newData);
-    await loadUserData();
-    renderCards(false);
-    closeMyDataModal();
-    showToast(`${merge ? '병합' : '교체'} 완료! (${newData.length}개)`);
-  } catch (e) {
-    alert('잘못된 백업 문자열입니다.');
+  // 클라우드 동기화 탭 선택 시 상태 갱신 + 타이머
+  if (syncTimeTimer) { clearInterval(syncTimeTimer); syncTimeTimer = null; }
+  if (tabName === 'cloud-sync') {
+    updateCloudSyncUI();
+    syncTimeTimer = setInterval(updateSyncTimeDisplay, 1000);
   }
 }
 
@@ -954,9 +926,28 @@ function setupEventListeners() {
     document.getElementById('sidebar-expand').style.display = 'none';
   });
 
-  // Sidebar buttons
-  document.getElementById('sync-btn').addEventListener('click', collectData);
-  document.getElementById('my-data-btn').addEventListener('click', () => openMyDataModal('hate-list'));
+  // Settings dropdown
+  document.getElementById('settings-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    const dropdown = document.getElementById('settings-dropdown');
+    dropdown.classList.toggle('open');
+  });
+  document.addEventListener('click', (e) => {
+    const dropdown = document.getElementById('settings-dropdown');
+    if (dropdown.classList.contains('open') && !e.target.closest('.settings-dropdown') && !e.target.closest('.settings-btn')) {
+      dropdown.classList.remove('open');
+    }
+  });
+
+  // Sidebar buttons (in settings dropdown)
+  document.getElementById('sync-btn').addEventListener('click', () => {
+    document.getElementById('settings-dropdown').classList.remove('open');
+    collectData();
+  });
+  document.getElementById('my-data-btn').addEventListener('click', () => {
+    document.getElementById('settings-dropdown').classList.remove('open');
+    openMyDataModal('hate-list');
+  });
 
   // Detail sidebar
   document.getElementById('detail-close').addEventListener('click', closeDetail);
@@ -981,12 +972,18 @@ function setupEventListeners() {
   document.getElementById('hate-search').addEventListener('input', (e) => {
     renderHateList(e.target.value);
   });
-  // 백업/복원
-  document.getElementById('export-btn').addEventListener('click', exportHateData);
-  document.getElementById('import-merge-btn').addEventListener('click', () => importHateData(true));
-  document.getElementById('import-replace-btn').addEventListener('click', () => importHateData(false));
   // 보고싶다 전체 해제
   document.getElementById('clear-wish-btn').addEventListener('click', clearAllWish);
+
+  // 클라우드 동기화
+  document.getElementById('cloud-sync-btn').addEventListener('click', () => {
+    document.getElementById('settings-dropdown').classList.remove('open');
+    openMyDataModal('cloud-sync');
+  });
+  document.getElementById('cloud-signin-btn').addEventListener('click', handleCloudSignIn);
+  document.getElementById('cloud-manual-sync-btn').addEventListener('click', handleCloudManualSync);
+  document.getElementById('cloud-pull-btn').addEventListener('click', handleCloudPull);
+  document.getElementById('cloud-signout-btn').addEventListener('click', handleCloudSignOut);
 
   // Storage changes
   chrome.storage.onChanged.addListener((changes, namespace) => {
@@ -1019,6 +1016,186 @@ function showToast(message, duration = 2000) {
   }, duration);
 }
 
+function timeAgo(timestamp) {
+  const seconds = Math.floor((Date.now() - timestamp) / 1000);
+  if (seconds < 10) return '방금 전';
+  if (seconds < 60) return `${seconds}초 전`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `${minutes}분 전`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}시간 전`;
+  const days = Math.floor(hours / 24);
+  if (days < 30) return `${days}일 전`;
+  return new Date(timestamp).toLocaleDateString('ko-KR');
+}
+
+// ========== Cloud Sync ==========
+
+async function updateHateItemV2(action, itemId, name, img) {
+  const result = await chrome.storage.local.get(['hate_items_v2']);
+  const data = result.hate_items_v2 || { version: 2, lastSyncedAt: null, items: {}, tombstones: {} };
+
+  if (action === 'add') {
+    data.items[itemId] = { name, img, addedAt: Date.now() };
+    delete data.tombstones[itemId];
+  } else if (action === 'remove') {
+    delete data.items[itemId];
+    data.tombstones[itemId] = Date.now();
+  }
+
+  await chrome.storage.local.set({ hate_items_v2: data });
+}
+
+let cloudSyncTimer = null;
+let syncTimeTimer = null;
+let lastSyncedAtCache = null;
+
+function updateSyncTimeDisplay() {
+  const el = document.getElementById('cloud-last-sync');
+  if (el && lastSyncedAtCache) {
+    el.textContent = timeAgo(lastSyncedAtCache);
+  }
+}
+
+function triggerCloudSync() {
+  if (cloudSyncTimer) clearTimeout(cloudSyncTimer);
+  cloudSyncTimer = setTimeout(() => {
+    chrome.runtime.sendMessage({ type: 'PERFORM_SYNC', interactive: false });
+    cloudSyncTimer = null;
+  }, 5000);
+}
+
+async function updateCloudSyncUI() {
+  const statusEl = document.getElementById('cloud-sync-status');
+  const statusText = document.getElementById('cloud-status-text');
+  const lastSyncEl = document.getElementById('cloud-last-sync');
+  const signinBtn = document.getElementById('cloud-signin-btn');
+  const syncBtn = document.getElementById('cloud-manual-sync-btn');
+  const pullBtn = document.getElementById('cloud-pull-btn');
+  const signoutBtn = document.getElementById('cloud-signout-btn');
+
+  try {
+    const { signedIn } = await chrome.runtime.sendMessage({ type: 'CHECK_SIGN_IN' });
+
+    if (signedIn) {
+      if (statusEl) statusEl.textContent = '동기화 활성';
+      if (statusText) statusText.textContent = '로그인됨';
+      if (signinBtn) signinBtn.style.display = 'none';
+      if (syncBtn) syncBtn.style.display = '';
+      if (pullBtn) pullBtn.style.display = '';
+      if (signoutBtn) signoutBtn.style.display = '';
+
+      const { lastSyncedAt } = await chrome.runtime.sendMessage({ type: 'GET_SYNC_STATUS' });
+      lastSyncedAtCache = lastSyncedAt;
+      if (lastSyncEl) {
+        lastSyncEl.textContent = lastSyncedAt
+          ? timeAgo(lastSyncedAt)
+          : '아직 동기화되지 않음';
+      }
+    } else {
+      if (statusEl) statusEl.textContent = '로그인 필요';
+      if (statusText) statusText.textContent = '로그인되지 않음';
+      if (lastSyncEl) lastSyncEl.textContent = '-';
+      if (signinBtn) signinBtn.style.display = '';
+      if (syncBtn) syncBtn.style.display = 'none';
+      if (pullBtn) pullBtn.style.display = 'none';
+      if (signoutBtn) signoutBtn.style.display = 'none';
+    }
+  } catch (e) {
+    if (statusEl) statusEl.textContent = '';
+    if (statusText) statusText.textContent = '확인 불가';
+  }
+}
+
+async function handleCloudSignIn() {
+  const signinBtn = document.getElementById('cloud-signin-btn');
+  const syncBtn = document.getElementById('cloud-manual-sync-btn');
+  const signoutBtn = document.getElementById('cloud-signout-btn');
+  if (signinBtn) { signinBtn.disabled = true; signinBtn.textContent = '로그인 중...'; }
+  if (syncBtn) syncBtn.disabled = true;
+  if (signoutBtn) signoutBtn.disabled = true;
+
+  try {
+    const result = await chrome.runtime.sendMessage({ type: 'PERFORM_SYNC', interactive: true });
+    if (result.status === 'success') {
+      showToast(`클라우드 동기화 완료 (${result.itemCount}개)`);
+      await loadUserData();
+      renderCards(false);
+      updateResultsCount();
+      updateHateCountBadge();
+    } else if (result.status === 'error') {
+      showToast('동기화 실패: ' + result.error);
+    }
+    updateCloudSyncUI();
+  } catch (e) {
+    showToast('로그인 실패: ' + e.message);
+  } finally {
+    if (signinBtn) { signinBtn.disabled = false; signinBtn.textContent = 'Google 로그인'; }
+    if (syncBtn) syncBtn.disabled = false;
+    if (signoutBtn) signoutBtn.disabled = false;
+  }
+}
+
+async function handleCloudManualSync() {
+  const signinBtn = document.getElementById('cloud-signin-btn');
+  const syncBtn = document.getElementById('cloud-manual-sync-btn');
+  const signoutBtn = document.getElementById('cloud-signout-btn');
+  if (signinBtn) signinBtn.disabled = true;
+  if (syncBtn) { syncBtn.disabled = true; syncBtn.textContent = '동기화 중...'; }
+  if (signoutBtn) signoutBtn.disabled = true;
+
+  try {
+    const result = await chrome.runtime.sendMessage({ type: 'PERFORM_SYNC', interactive: false });
+    if (result.status === 'success') {
+      showToast(`동기화 완료 (${result.itemCount}개)`);
+      await loadUserData();
+      renderCards(false);
+      updateResultsCount();
+      updateHateCountBadge();
+    } else {
+      showToast('동기화 실패');
+    }
+    updateCloudSyncUI();
+  } catch (e) {
+    showToast('동기화 실패');
+  } finally {
+    if (signinBtn) signinBtn.disabled = false;
+    if (syncBtn) { syncBtn.disabled = false; syncBtn.textContent = '지금 동기화'; }
+    if (signoutBtn) signoutBtn.disabled = false;
+  }
+}
+
+async function handleCloudPull() {
+  const pullBtn = document.getElementById('cloud-pull-btn');
+  if (pullBtn) { pullBtn.disabled = true; pullBtn.textContent = '불러오는 중...'; }
+
+  try {
+    const result = await chrome.runtime.sendMessage({ type: 'PULL_FROM_CLOUD' });
+    if (result.status === 'success') {
+      showToast(`클라우드에서 불러오기 완료 (${result.itemCount}개)`);
+      await loadUserData();
+      renderCards(false);
+      updateResultsCount();
+      updateHateCountBadge();
+    } else if (result.status === 'empty') {
+      showToast('클라우드에 저장된 데이터가 없습니다');
+    } else {
+      showToast('불러오기 실패: ' + result.error);
+    }
+    updateCloudSyncUI();
+  } catch (e) {
+    showToast('불러오기 실패: ' + e.message);
+  } finally {
+    if (pullBtn) { pullBtn.disabled = false; pullBtn.textContent = '클라우드에서 불러오기'; }
+  }
+}
+
+async function handleCloudSignOut() {
+  await chrome.runtime.sendMessage({ type: 'SIGN_OUT' });
+  showToast('로그아웃 완료');
+  updateCloudSyncUI();
+}
+
 // ========== Initialization ==========
 async function init() {
   await loadUserData();
@@ -1030,6 +1207,9 @@ async function init() {
   setupCollapsibleSections();
   setupInfiniteScroll();
   await fetchDiscoverResults();
+
+  // 클라우드 동기화 상태 초기화
+  updateCloudSyncUI();
 }
 
 document.addEventListener('DOMContentLoaded', init);

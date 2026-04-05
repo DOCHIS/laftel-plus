@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Laftel Plus - A Chrome extension that helps you discover new anime on Laftel (laftel.net) anime streaming service with advanced filtering, personalized exclusions, and Google Drive cloud sync.">
+  <link rel="alternate" hreflang="ko" href="https://laftel-plus.myuntras.net/ko.html">
+  <link rel="alternate" hreflang="en" href="https://laftel-plus.myuntras.net/">
+  <title>Laftel Plus - Anime Discovery Chrome Extension</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #fff; min-height: 100vh; display: flex; justify-content: center; align-items: center; }
+    .container { max-width: 640px; padding: 40px 24px; }
+    h1 { font-size: 36px; font-weight: 700; color: #816BFF; margin-bottom: 16px; text-align: center; }
+    .tagline { font-size: 16px; color: #ccc; line-height: 1.6; margin-bottom: 24px; text-align: center; }
+    h2 { font-size: 16px; color: #fff; margin: 24px 0 12px; }
+    p { font-size: 14px; color: #aaa; line-height: 1.8; margin-bottom: 16px; }
+    ul { margin-bottom: 24px; padding-left: 20px; }
+    li { font-size: 14px; color: #aaa; line-height: 1.8; margin-bottom: 6px; }
+    .links { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin: 32px 0; }
+    .links a { color: #816BFF; text-decoration: none; font-size: 14px; padding: 10px 20px; border: 1px solid rgba(129,107,255,0.3); border-radius: 8px; transition: all 0.2s; }
+    .links a:hover { background: rgba(129,107,255,0.15); }
+    footer { border-top: 1px solid rgba(255,255,255,0.1); padding-top: 24px; text-align: center; }
+    footer a { color: #816BFF; text-decoration: underline; font-size: 14px; }
+    .footnote { font-size: 12px; color: #666; margin-top: 12px; }
+    .lang-switch { position: fixed; top: 16px; right: 16px; }
+    .lang-switch a { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #888; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; transition: all 0.2s; }
+    .lang-switch a:hover { color: #fff; background: rgba(255,255,255,0.15); }
+  </style>
+  <script>
+    if (!localStorage.getItem('lang_manual') && navigator.language.startsWith('ko')) {
+      location.replace('ko.html');
+    }
+  </script>
+</head>
+<body>
+  <div class="lang-switch"><a href="ko.html">한국어</a></div>
+
+  <div class="container">
+    <h1>Laftel Plus</h1>
+    <p class="tagline">Discover new anime on Laftel more easily.</p>
+
+    <h2>About This App</h2>
+    <p>
+      Laftel Plus is a Chrome browser extension designed for the Laftel (laftel.net) anime streaming service.
+      It offers a dedicated search page with advanced filtering options such as genre, tags, release year, and airing status.
+      The extension automatically excludes anime you've already rated or marked as "not interested," helping you efficiently discover new titles that match your preferences.
+      Users can also quickly toggle "want to watch" or "not interested" status directly from each anime card without leaving the search page.
+    </p>
+
+    <h2>Google User Data Usage</h2>
+    <p>
+      Laftel Plus offers an optional cloud sync feature powered by Google Drive.
+      By signing in with your Google account, your "not interested" list can be synced across multiple devices automatically.
+      This feature uses only the <code>drive.appdata</code> scope, which limits access to a hidden app-specific folder in your Google Drive — the extension cannot access any of your other Drive files or documents.
+      The synced data consists of anime IDs, names, and thumbnail URLs only.
+      No data is transmitted to any developer-owned server; all data is stored exclusively in your own Google Drive account.
+      Cloud sync is entirely optional — if you choose not to use it, all data remains stored locally in your browser.
+    </p>
+
+    <h2>Key Features</h2>
+    <ul>
+      <li>Dedicated search page with advanced filtering (genre, tags, year, airing status)</li>
+      <li>Auto-exclude rated and not-interested anime from search results</li>
+      <li>Quick action buttons to toggle "want to watch" and "not interested" on each card</li>
+      <li>Infinite scroll for seamless browsing</li>
+      <li>Detail sidebar with anime information</li>
+      <li>Google Drive cloud sync for multi-device support (optional)</li>
+    </ul>
+
+    <div class="links">
+      <a href="https://chromewebstore.google.com/detail/jmhoodplammdpcobiaccbeiikolihkjp">Chrome Web Store</a>
+      <a href="https://github.com/DOCHIS/laftel-plus">GitHub</a>
+    </div>
+
+    <footer>
+      <a href="https://laftel-plus.myuntras.net/privacy-policy.html">Privacy Policy</a>
+      <p class="footnote">This extension is not an official Laftel service.</p>
+    </footer>
+  </div>
+</body>
+</html>

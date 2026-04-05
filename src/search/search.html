@@ -14,7 +14,35 @@
         <!-- Logo -->
         <div class="sidebar-logo">
           <h1 class="logo">라프텔 플러스</h1>
-          <button id="sidebar-toggle" class="sidebar-toggle" title="사이드바 접기">◀</button>
+          <div class="sidebar-logo-actions">
+            <button id="settings-btn" class="settings-btn" title="설정">⚙</button>
+            <button id="sidebar-toggle" class="sidebar-toggle" title="사이드바 접기">◀</button>
+          </div>
+          <!-- Settings Dropdown -->
+          <div class="settings-dropdown" id="settings-dropdown">
+            <button class="settings-dropdown-item" id="sync-btn">
+              <span class="settings-dropdown-icon">↻</span>
+              <div class="settings-dropdown-text">
+                <span class="settings-dropdown-label">데이터 동기화</span>
+                <span class="settings-dropdown-desc">라프텔 계정의 평가/보고싶다 목록을 불러옵니다</span>
+              </div>
+            </button>
+            <button class="settings-dropdown-item" id="my-data-btn">
+              <span class="settings-dropdown-icon">📋</span>
+              <div class="settings-dropdown-text">
+                <span class="settings-dropdown-label">내 데이터 관리</span>
+                <span class="settings-dropdown-desc">관심없음 목록 확인, 백업/복원, 보고싶다 전체 해제</span>
+              </div>
+            </button>
+            <button class="settings-dropdown-item" id="cloud-sync-btn">
+              <span class="settings-dropdown-icon">☁</span>
+              <div class="settings-dropdown-text">
+                <span class="settings-dropdown-label">클라우드 동기화</span>
+                <span class="settings-dropdown-desc">관심없음 목록을 Google 계정에 저장하여 다른 PC에서도 유지</span>
+                <span class="settings-dropdown-status" id="cloud-sync-status"></span>
+              </div>
+            </button>
+          </div>
         </div>
 
         <!-- Extension Filters -->
@@ -80,16 +108,6 @@
           <button id="clear-filters-btn" class="clear-filters-btn">필터 초기화</button>
         </div>
 
-        <!-- Sidebar Actions -->
-        <div class="filter-section sidebar-actions">
-          <button id="sync-btn" class="sidebar-btn" title="라프텔에서 평가/보고싶다 데이터 가져오기">
-            <span>↻</span> 데이터 동기화
-          </button>
-          <p class="sidebar-desc">라프텔에서 평가/보고싶다 정보를 가져옵니다</p>
-          <button id="my-data-btn" class="sidebar-btn">
-            <span>📋</span> 내 데이터 관리
-          </button>
-        </div>
       </aside>
 
       <!-- Right: Card Grid -->
@@ -151,9 +169,9 @@
         <button class="modal-close" id="my-data-modal-close">&times;</button>
       </div>
       <div class="modal-tabs">
-        <button class="modal-tab active" data-tab="hate-list">관심없음 목록</button>
-        <button class="modal-tab" data-tab="backup">백업/복원</button>
+        <button class="modal-tab active" data-tab="hate-list">관심없음 목록 <span id="hate-count-badge"></span></button>
         <button class="modal-tab" data-tab="wish-clear">보고싶다 초기화</button>
+        <button class="modal-tab" data-tab="cloud-sync">클라우드 동기화</button>
       </div>
       <div class="modal-body">
         <!-- 관심없음 목록 탭 -->
@@ -165,29 +183,35 @@
           <div class="hate-list" id="hate-list"></div>
         </div>
 
-        <!-- 백업/복원 탭 -->
-        <div class="tab-content" id="tab-backup">
-          <div class="backup-section">
-            <h3>내보내기</h3>
-            <p class="backup-desc">관심없음 목록을 백업 파일로 내보냅니다.</p>
-            <button id="export-btn" class="btn-secondary">파일로 내보내기</button>
-          </div>
-          <div class="backup-section">
-            <h3>불러오기</h3>
-            <p class="backup-desc">백업 문자열을 붙여넣어 복원합니다.</p>
-            <textarea id="import-input" class="import-textarea" placeholder="백업 문자열 붙여넣기..."></textarea>
-            <div class="import-actions">
-              <button id="import-merge-btn" class="btn-secondary">병합</button>
-              <button id="import-replace-btn" class="btn-danger">교체</button>
-            </div>
-          </div>
-        </div>
 
-        <!-- 보고싶다 초기화 탭 -->
+<!-- 보고싶다 초기화 탭 -->
         <div class="tab-content" id="tab-wish-clear">
           <div class="wish-clear-section">
             <p class="backup-desc">라프텔에 등록된 모든 보고싶다를 해제합니다. 이 작업은 되돌릴 수 없습니다.</p>
             <button id="clear-wish-btn" class="btn-danger btn-large">보고싶다 전체 해제</button>
+          </div>
+        </div>
+
+        <!-- 클라우드 동기화 탭 -->
+        <div class="tab-content" id="tab-cloud-sync">
+          <div class="cloud-sync-section">
+            <p class="backup-desc">Google 계정으로 로그인하면 관심없음 목록이 Google Drive에 자동 동기화됩니다. 다른 기기에서도 동일한 목록을 유지할 수 있으며, 데이터는 본인의 Drive에만 저장됩니다.</p>
+            <div class="cloud-sync-info" id="cloud-sync-info">
+              <div class="cloud-sync-row">
+                <span class="cloud-sync-label">상태</span>
+                <span id="cloud-status-text">확인 중...</span>
+              </div>
+              <div class="cloud-sync-row">
+                <span class="cloud-sync-label">마지막 동기화</span>
+                <span id="cloud-last-sync">-</span>
+              </div>
+            </div>
+            <div class="cloud-sync-actions">
+              <button id="cloud-signin-btn" class="btn-secondary">Google 로그인</button>
+              <button id="cloud-manual-sync-btn" class="btn-secondary" style="display:none;">지금 동기화</button>
+              <button id="cloud-pull-btn" class="btn-secondary" style="display:none;">클라우드에서 불러오기</button>
+              <button id="cloud-signout-btn" class="btn-danger" style="display:none;">로그아웃</button>
+            </div>
           </div>
         </div>
       </div>

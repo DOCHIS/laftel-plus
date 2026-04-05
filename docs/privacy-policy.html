@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Privacy Policy for Laftel Plus Chrome Extension">
+  <link rel="alternate" hreflang="ko" href="https://laftel-plus.myuntras.net/privacy-policy-ko.html">
+  <link rel="alternate" hreflang="en" href="https://laftel-plus.myuntras.net/privacy-policy.html">
+  <title>Privacy Policy - Laftel Plus</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #1a1a2e; color: #ddd; min-height: 100vh; padding: 40px 24px; }
+    .container { max-width: 680px; margin: 0 auto; }
+    h1 { font-size: 28px; font-weight: 700; color: #816BFF; margin-bottom: 8px; }
+    .subtitle { font-size: 14px; color: #888; margin-bottom: 4px; }
+    hr { border: none; border-top: 1px solid rgba(255,255,255,0.1); margin: 24px 0; }
+    h2 { font-size: 18px; font-weight: 600; color: #fff; margin-bottom: 12px; }
+    p { font-size: 14px; line-height: 1.8; color: #bbb; margin-bottom: 16px; }
+    ul { margin-bottom: 16px; padding-left: 20px; }
+    li { font-size: 14px; line-height: 1.8; color: #bbb; margin-bottom: 4px; }
+    strong { color: #ddd; }
+    code { color: #816BFF; font-size: 13px; }
+    .back { display: inline-block; margin-top: 16px; color: #816BFF; text-decoration: none; font-size: 13px; }
+    .back:hover { text-decoration: underline; }
+    .footer { margin-top: 32px; font-size: 12px; color: #666; text-align: center; }
+    .lang-switch { position: fixed; top: 16px; right: 16px; }
+    .lang-switch a { background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.15); color: #888; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 12px; transition: all 0.2s; }
+    .lang-switch a:hover { color: #fff; background: rgba(255,255,255,0.15); }
+  </style>
+  <script>
+    if (!localStorage.getItem('lang_manual') && navigator.language.startsWith('ko')) {
+      location.replace('privacy-policy-ko.html');
+    }
+  </script>
+</head>
+<body>
+  <div class="lang-switch"><a href="privacy-policy-ko.html">한국어</a></div>
+
+  <div class="container">
+    <h1>Privacy Policy</h1>
+    <p class="subtitle"><strong>Laftel Plus</strong></p>
+    <p class="subtitle">Last updated: April 2026</p>
+    <hr>
+
+    <h2>1. Overview</h2>
+    <p>Laftel Plus is a tool designed to enhance the user experience on the Laftel (laftel.net) streaming service. By default, all data is stored only in the user's browser. Optionally, users can enable cloud sync via Google Drive.</p>
+
+    <h2>2. Information We Collect</h2>
+    <p>This extension does not collect any personal information.</p>
+
+    <h2>3. Locally Stored Data</h2>
+    <p>The following data is stored only in the user's browser local storage (chrome.storage.local) and is not transmitted to external servers:</p>
+    <ul>
+      <li>Rated anime list (anime ID, rating)</li>
+      <li>"Want to watch" list (anime ID)</li>
+      <li>"Not interested" list (anime ID)</li>
+      <li>Anime info cache (name, thumbnail URL, genre, media type, age rating)</li>
+      <li>Extension settings (hide options, filter settings)</li>
+    </ul>
+
+    <h2>4. Cookie Usage</h2>
+    <p>To verify the user's login status when calling the Laftel API, the extension reads authentication cookies from the laftel.net domain. This information is:</p>
+    <ul>
+      <li>Used only in the Authorization header of Laftel API requests</li>
+      <li>Not stored by the extension</li>
+      <li>Not transmitted externally</li>
+    </ul>
+
+    <h2>5. Cloud Sync (Optional)</h2>
+    <p>When the user enables cloud sync, the "not interested" list is stored in the user's own Google Drive.</p>
+    <ul>
+      <li><strong>Storage location</strong>: User's own Google Drive app data folder (hidden folder not visible to the user)</li>
+      <li><strong>Stored data</strong>: "Not interested" list (anime ID, name, thumbnail URL)</li>
+      <li><strong>Access scope</strong>: Only <code>drive.appdata</code> scope is used; the extension cannot access any other Drive files</li>
+      <li><strong>Authentication</strong>: Google account authentication via Chrome's built-in identity API (<code>chrome.identity</code>)</li>
+      <li>No data is stored on any developer-owned server</li>
+      <li>If sync is not used, all data remains in the browser only</li>
+    </ul>
+
+    <h2>6. Data Transmission</h2>
+    <p>This extension transmits data only to the following services:</p>
+    <ul>
+      <li><strong>Laftel (laftel.net)</strong>: Querying and modifying rated / "want to watch" lists</li>
+      <li><strong>Google Drive</strong> (optional): Syncing the "not interested" list (stored in user's own Drive only)</li>
+    </ul>
+
+    <h2>7. Third-Party Sharing</h2>
+    <p>No data is shared, sold, or transmitted to any third party.</p>
+
+    <h2>8. Data Deletion</h2>
+    <p>Removing the extension from the browser automatically deletes all locally stored data. Data can also be manually deleted through browser settings.</p>
+
+    <h2>9. Changes</h2>
+    <p>This privacy policy may be updated. Changes will be announced through extension updates.</p>
+
+    <h2>10. Contact</h2>
+    <p>For inquiries, please contact us via <a href="https://github.com/DOCHIS/laftel-plus/issues" style="color:#816BFF;">GitHub Issues</a>.</p>
+
+    <hr>
+    <a class="back" href="./">← Home</a>
+    <p class="footer">This extension is not an official Laftel service.</p>
+  </div>
+</body>
+</html>
